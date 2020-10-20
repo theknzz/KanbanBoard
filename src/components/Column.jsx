@@ -11,6 +11,8 @@ const Container = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 100%;
+    background-color: #9CC5A1;
 `;
 
 const Title = styled.h3`
@@ -19,11 +21,9 @@ const Title = styled.h3`
 `;
 const TaskList = styled.div`
     padding: 8px;
-    display: block;
     transition: background-color 0.2s ease;
     background-color: ${ props => props.isDraggingOver ? 'skyblue' : 'white'};
     flex-grow: 1;
-    min-height: 100%;
 `;
 
 const Column = (props) => {

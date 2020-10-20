@@ -4,6 +4,7 @@ import initialData from "./initial-data";
 import Column from './components/Column.jsx'
 import { DragDropContext } from 'react-beautiful-dnd'
 import styled from 'styled-components'
+import Navbar from "./components/Navbar";
 
 
 const Container = styled.div`
@@ -75,20 +76,23 @@ function App() {
   }
 
   return (
-      <DragDropContext
-        onDragEnd={onDragEnd}
-        // onDragStart={onDragStart}
-        // onDragUpdate={onDragUpdate}
-      >
-          <Container>
-              {state.columnOrder.map( columnId => {
-                const column = state.columns[columnId];
-                const tasks = column.taskIds.map( taskId => state.tasks[taskId]);
+      <>
+          <Navbar />
+          <DragDropContext
+            onDragEnd={onDragEnd}
+            // onDragStart={onDragStart}
+            // onDragUpdate={onDragUpdate}
+          >
+              <Container>
+                  {state.columnOrder.map( columnId => {
+                    const column = state.columns[columnId];
+                    const tasks = column.taskIds.map( taskId => state.tasks[taskId]);
 
-                return <Column key={column.id} column={column} tasks={tasks} />
-              })}
-          </Container>
-      </DragDropContext>
+                    return <Column key={column.id} column={column} tasks={tasks} />
+                  })}
+              </Container>
+          </DragDropContext>
+      </>
   );
 }
 
