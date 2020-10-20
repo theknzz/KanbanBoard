@@ -43,7 +43,7 @@ const Column = (props) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         props.submitTask(state);
-        console.log(state)
+        // console.log(state)
         setState({
             ...state,
             task: ''
@@ -73,7 +73,8 @@ const Column = (props) => {
                             {...provided.droppableProps}
                             isDraggingOver={snapshot.isDraggingOver}
                         >
-                            {props.tasks && props.tasks.map( (task, index) => <Task key={task.id} task={task} index={index}/>)}
+                            {props.tasks && props.tasks.map( (task, index) =>
+                                <Task key={task.id} task={task} index={index}/>)}
                             {provided.placeholder}
                         </TaskList>
                     )}

@@ -14,7 +14,6 @@ const Container = styled.div`
 `
 
 function App(props) {
-
   // const onDragStart = (result) => {
   //   document.body.style.color = 'orange';
   // }
@@ -24,13 +23,16 @@ function App(props) {
   // }
 
   const onDragEnd = (result) => {
-      // document.body.style.color = 'inherit';
+    // document.body.style.color = 'inherit';
+      console.log(result)
       const { destination, source, draggableId } = result;
 
+      // if user is trying to drop a draggable out of a droppable
       if (!destination) {
           return;
       }
 
+      // if the user try to move the card into the same position nothing changes
       if (
           destination.droppableId === source.droppableId &&
           destination.index === source.index
@@ -38,30 +40,40 @@ function App(props) {
           return;
       }
 
+      // get the column and the tasks from the origin/source column
       const srcColumn = props.cols[source.droppableId];
       const srcTaskList = Array.from(srcColumn.taskIds);
 
+      // get the column and the tasks from the destination column
       const destColumn = props.cols[destination.droppableId];
       const destTaskList = Array.from(destColumn.taskIds);
 
+      // remove the tasks from the original position
       srcTaskList.splice(source.index, 1);
 
-      if (source.droppableId === destination.droppableId)
-        srcTaskList.splice(destination.index, 0, draggableId);
+      console.log('track', srcTaskList)
 
+      const inSameColumn = source.droppableId === destination.droppableId;
+
+      if (inSameColumn)
+          srcTaskList.splice(destination.index, 0, draggableId);
+
+      // add the tasks at the final position
       destTaskList.splice(destination.index, 0, draggableId);
 
+      // update the source column
       const newSourceColumn = {
           ...srcColumn,
           taskIds: srcTaskList,
       }
 
+      // update the destination column
       const newDestColumn = {
           ...destColumn,
-          taskIds: destTaskList,
+          taskIds: inSameColumn ? srcTaskList : destTaskList,
       }
 
-
+      // update the board
       const board = {
           tasks: props.tasks,
           columnOrder: props.columnOrder,
@@ -72,6 +84,7 @@ function App(props) {
           }
       }
 
+      // call an action to update the board
       props.updateBoard(board)
   }
 
