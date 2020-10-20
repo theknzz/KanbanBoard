@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import initialData from "./initial-data";
 import Column from './components/Column.jsx'
 import { DragDropContext } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 import Navbar from "./components/Navbar";
-
+import { connect } from 'react-redux'
+import {updateBoard} from "./store/actions/taskActions";
 
 const Container = styled.div`
     display: flex;
     flex-wrap: wrap;
 `
 
-function App() {
-  const [state, setState] = useState(initialData);
+function App(props) {
 
   // const onDragStart = (result) => {
   //   document.body.style.color = 'orange';
@@ -25,7 +25,6 @@ function App() {
 
   const onDragEnd = (result) => {
       // document.body.style.color = 'inherit';
-      console.log(result)
       const { destination, source, draggableId } = result;
 
       if (!destination) {
@@ -39,10 +38,10 @@ function App() {
           return;
       }
 
-      const srcColumn = state.columns[source.droppableId];
+      const srcColumn = props.cols[source.droppableId];
       const srcTaskList = Array.from(srcColumn.taskIds);
 
-      const destColumn = state.columns[destination.droppableId];
+      const destColumn = props.cols[destination.droppableId];
       const destTaskList = Array.from(destColumn.taskIds);
 
       srcTaskList.splice(source.index, 1);
@@ -62,17 +61,18 @@ function App() {
           taskIds: destTaskList,
       }
 
-      const newState = {
-          ...state,
+
+      const board = {
+          tasks: props.tasks,
+          columnOrder: props.columnOrder,
           columns: {
-              ...state.columns,
+              ...props.cols,
               [source.droppableId]: newSourceColumn,
               [destination.droppableId]: newDestColumn,
           }
       }
 
-      setState(newState)
-      console.log('STATE', newState);
+      props.updateBoard(board)
   }
 
   return (
@@ -84,11 +84,11 @@ function App() {
             // onDragUpdate={onDragUpdate}
           >
               <Container>
-                  {state.columnOrder.map( columnId => {
-                    const column = state.columns[columnId];
-                    const tasks = column.taskIds.map( taskId => state.tasks[taskId]);
-
-                    return <Column key={column.id} column={column} tasks={tasks} />
+                  {props.columnOrder && props.columnOrder.map( columnId => {
+                      const column = props.cols[columnId];
+                      const tasks = column.taskIds && column.taskIds.map( taskId => props.tasks[taskId]);
+                      console.log('dbg:', column)
+                      return <Column key={column.id} column={column} tasks={tasks} />
                   })}
               </Container>
           </DragDropContext>
@@ -96,4 +96,18 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        columnOrder: state.columnOrder,
+        cols: state.columns,
+        tasks: state.tasks,
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateBoard: (board) => dispatch(updateBoard(board)),
+    }
+}
+
+export default  connect(mapStateToProps, mapDispatchToProps)(App);
