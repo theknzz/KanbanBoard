@@ -4,6 +4,7 @@ import Task from './Task.jsx'
 import { Droppable } from 'react-beautiful-dnd'
 import { connect } from 'react-redux'
 import { createTask } from "../store/actions/taskActions";
+import { deleteTask } from "../store/actions/taskActions";
 
 const Container = styled.div`
     margin: 8px;
@@ -60,6 +61,10 @@ const Column = (props) => {
         setState(newState);
     }
 
+    const handleClick = (taskId, columnId) => {
+        props.finishTask(taskId, columnId);
+    }
+
     return (
         <>
             <Container>
@@ -74,14 +79,20 @@ const Column = (props) => {
                             isDraggingOver={snapshot.isDraggingOver}
                         >
                             {props.tasks && props.tasks.map( (task, index) =>
-                                <Task key={task.id} task={task} index={index}/>)}
+                                <Task onClick={() => handleClick(task.id, props.column.id)}
+                                      key={task.id} task={task} index={index}/>)}
                             {provided.placeholder}
                         </TaskList>
                     )}
                 </Droppable>
                 <CreateTask>
                     <form onSubmit={handleSubmit}>
-                        <input value={state.task} onChange={handleChange} type={'text'}/>
+                        <input
+                            placeholder={'Type new task'}
+                            value={state.task}
+                            onChange={handleChange}
+                            type={'text'}
+                        />
                     </form>
                 </CreateTask>
             </Container>
@@ -91,7 +102,8 @@ const Column = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        submitTask: (task) => dispatch(createTask(task))
+        submitTask: (task) => dispatch(createTask(task)),
+        finishTask: (taskId, columnId) => dispatch(deleteTask(taskId, columnId))
     }
 }
 

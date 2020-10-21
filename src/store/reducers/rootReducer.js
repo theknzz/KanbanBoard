@@ -33,6 +33,35 @@ const rootReducer = ( state = initialData, action) => {
                 columns: action.board.columns,
                 columnOrder: action.board.columnOrder,
             }
+        case 'DELETE_TASK':
+            // filter all the tasks and delete the respective one
+            const tasks = state.tasks;
+
+            delete tasks[action.taskId];
+            console.log(tasks)
+            // pick the task's column
+            let col = state.columns[action.columnId];
+
+            // get the tasks from that column
+            let tasksFromCol = Array.from(col.taskIds);
+
+            // filter those tasks and delete the respective one
+            tasksFromCol = tasksFromCol.filter(task => {
+                return task !== action.taskId
+            });
+
+            // update the state
+            return {
+                ...state,
+                tasks,
+                columns: {
+                    ...state.columns,
+                    [col.id]: {
+                        ...col,
+                        taskIds: tasksFromCol,
+                    }
+                }
+            };
         default:
             return state;
     }

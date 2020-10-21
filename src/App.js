@@ -100,7 +100,7 @@ function App(props) {
                   {props.columnOrder && props.columnOrder.map( columnId => {
                       const column = props.cols[columnId];
                       const tasks = column.taskIds && column.taskIds.map( taskId => props.tasks[taskId]);
-                      console.log('dbg:', column)
+                      console.log('dbg:', props)
                       return <Column key={column.id} column={column} tasks={tasks} />
                   })}
               </Container>

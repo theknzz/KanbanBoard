@@ -14,3 +14,11 @@ export const updateBoard = (board) => {
         board,
     }
 }
+
+export const deleteTask = (taskId, columnId) => {
+    return {
+        type: 'DELETE_TASK',
+        taskId,
+        columnId
+    }
+}
